@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>İyonik Kristal Denge Uzaklığı Simülatörü</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <h1>İyonik Kristal Denge Uzaklığı Simülatörü</h1>
+        <p class="subtitle">
+          İki iyon seç, kristal örgüsünü belirle, başlangıç <code>R₀</code> gir
+          ve sayısal yöntemle denge mesafesine yakınsamayı gör.
+        </p>
+      </header>
+
+      <main class="app-main">
+        <!-- Sol taraf: Görsel kutu -->
+        <section class="visual-panel">
+          <h2>Kristal Görselleştirme</h2>
+          <div id="visual-box">
+            <div id="lattice-background"></div>
+
+            <div id="main-pair">
+              <div id="ion-positive-main" class="ion ion-positive">+</div>
+              <div id="ion-negative-main" class="ion ion-negative">-</div>
+              <div id="bond-line"></div>
+            </div>
+
+            <div id="visual-overlay-info">
+              <div>Aktif R: <span id="current-R">–</span> Å</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sağ taraf: Kontroller -->
+        <section class="control-panel">
+          <h2>Model Ayarları</h2>
+
+          <div class="form-group">
+            <label for="positive-ion">Pozitif iyon (kation):</label>
+            <select id="positive-ion">
+              <!-- JS dolduracak -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="negative-ion">Negatif iyon (anion):</label>
+            <select id="negative-ion">
+              <!-- JS dolduracak -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="lattice-type">Kristal örgüsü:</label>
+            <select id="lattice-type">
+              <option value="BCC">BCC (ör. CsCl tipi)</option>
+              <option value="FCC">FCC (ör. NaCl tipi)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="initial-R"> Başlangıç uzaklığı R₀ (Å): </label>
+            <input
+              type="number"
+              id="initial-R"
+              step="0.01"
+              min="0.1"
+              placeholder="örn. 3.0"
+            />
+            <button id="suggest-R" type="button" class="secondary">
+              Önerilen R₀'ı kullan
+            </button>
+          </div>
+
+          <div class="form-group-inline">
+            <label for="max-iter">Maks. iterasyon:</label>
+            <input type="number" id="max-iter" min="1" max="50" value="10" />
+
+            <label for="tolerance">Hata eşiği:</label>
+            <input type="number" id="tolerance" step="0.0001" value="0.0001" />
+          </div>
+
+          <div class="form-actions">
+            <button id="run-iterations" type="button" class="primary">
+              İterasyona Başla
+            </button>
+            <button id="reset-view" type="button" class="ghost">Sıfırla</button>
+          </div>
+
+          <div class="info-box">
+            <h3>Seçilen Parametreler</h3>
+            <p>
+              <strong>A:</strong> <span id="param-A">–</span> <br />
+              <strong>B:</strong> <span id="param-B">–</span> <br />
+              <strong>n:</strong> <span id="param-n">–</span>
+            </p>
+            <p class="param-note">
+              Parametreler seçilen iyon çifti ve kristal örgüsüne göre önceden
+              tanımlanmıştır (örnek setler).
+            </p>
+          </div>
+
+          <div class="log-box">
+            <h3>Newton İterasyon Günlüğü</h3>
+            <pre id="iteration-log">(henüz çalıştırılmadı)</pre>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <small>
+          Sayısal Analiz Projesi – İyonik Kristallerde Denge Uzaklığı
+          Simülasyonu
+        </small>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
