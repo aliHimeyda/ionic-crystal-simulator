@@ -8,7 +8,7 @@
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   color: #0f172a;
-  background-color: #0b1120;
+  background-color: rgb(255, 255, 255);
 }
 
 body {
@@ -19,6 +19,8 @@ body {
 .app {
   min-height: 100vh;
   max-width: 1200px;
+  align-items: center;
+  justify-items: center;
   margin: 0 auto;
   padding: 24px 16px 32px;
   color: #e5e7eb;
@@ -31,6 +33,7 @@ body {
 
 .app-header h1 {
   font-size: 1.7rem;
+  color: #de6231;
   margin: 0;
   margin-bottom: 8px;
 }
@@ -38,35 +41,47 @@ body {
 .app-header .subtitle {
   margin: 0;
   font-size: 0.95rem;
-  color: #9ca3af;
+  color: black;
 }
 
 .app-main {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   gap: 20px;
 }
 
 .app-footer {
   margin-top: 24px;
   text-align: center;
-  color: #6b7280;
+  color: black;
   font-size: 0.8rem;
 }
 
 /* Panels */
-.visual-panel,
-.control-panel {
-  background: radial-gradient(circle at top left, #1f2937, #020617);
+.visual-panel {
+  background: radial-gradient(circle at top left, #e2efd8, #f8fff2);
+  width: 60%;
   border-radius: 16px;
   padding: 16px 18px 18px;
-  border: 1px solid #111827;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+  border: 1px solid #cedac6;
+  box-shadow: 0 6px 10px #de6231;
+}
+.control-panel {
+  background: radial-gradient(circle at top left, #e2efd8, #f8fff2);
+  width: 40%;
+  border-radius: 16px;
+  padding: 16px 18px 18px;
+  border: 1px solid #cedac6;
+  box-shadow: 0 6px 10px #de6231;
 }
 
 .visual-panel h2,
 .control-panel h2 {
   margin: 0 0 12px;
+  color: black;
   font-size: 1.1rem;
 }
 
@@ -76,19 +91,11 @@ body {
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 14px;
-  border: 1px solid #1f2937;
-  background-image: linear-gradient(
-      to right,
-      rgba(55, 65, 81, 0.4) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(55, 65, 81, 0.4) 1px,
-      transparent 1px
-    );
+  border: 1px solid #b0bca8;
+  background-image: linear-gradient(to right, #de6231 1px, transparent 1px),
+    linear-gradient(to bottom, #de6231 1px, transparent 1px);
   background-size: 32px 32px;
-  background-color: #020617;
+  background-color: white;
   overflow: hidden;
 }
 
@@ -113,14 +120,14 @@ body {
 
 .lattice-positive {
   border: 1px solid rgba(96, 165, 250, 0.7);
-  color: #bfdbfe;
-  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.5), transparent);
+  color: black;
+  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.5));
 }
 
 .lattice-negative {
   border: 1px solid rgba(248, 113, 113, 0.7);
-  color: #fecaca;
-  background: radial-gradient(circle at top, rgba(239, 68, 68, 0.5), transparent);
+  color: black;
+  background: radial-gradient(circle at top, rgba(239, 68, 68, 0.5));
 }
 
 /* Main pair */
@@ -158,15 +165,8 @@ body {
 
 #bond-line {
   position: absolute;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    #f97316,
-    #eab308,
-    #22c55e,
-    #22d3ee,
-    #6366f1
-  );
+  height: 3px;
+  background: #de6231;
   transform: translateY(-50%);
   opacity: 0.8;
 }
@@ -179,9 +179,9 @@ body {
   padding: 4px 8px;
   border-radius: 999px;
   font-size: 0.8rem;
-  color: #e5e7eb;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(55, 65, 81, 0.9);
+  color: white;
+  background: #de6231;
+  border: 1px solid #af4e27;
 }
 
 /* Controls */
@@ -202,22 +202,22 @@ body {
 
 label {
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: black;
 }
 
 select,
 input[type="number"] {
   padding: 6px 8px;
   border-radius: 8px;
-  border: 1px solid #1f2937;
-  background: #020617;
-  color: #e5e7eb;
+  border: 1px solid #cedac6;
+  background: white;
+  color: black;
   font-size: 0.85rem;
 }
 
 select:focus,
 input[type="number"]:focus {
-  outline: 2px solid #2563eb;
+  outline: 2px solid #de6231;
   outline-offset: 1px;
 }
 
@@ -235,7 +235,7 @@ button {
 }
 
 button.primary {
-  background: linear-gradient(to right, #2563eb, #4f46e5);
+  background: #de6231;
   color: white;
 }
 
@@ -244,22 +244,23 @@ button.primary:hover {
 }
 
 button.secondary {
-  background: rgba(31, 41, 55, 0.8);
-  color: #e5e7eb;
+  background: #de6231;
+  width: 30%;
+  color: white;
 }
 
 button.secondary:hover {
-  background: rgba(55, 65, 81, 0.9);
+  filter: brightness(1.1);
 }
 
 button.ghost {
   background: transparent;
-  color: #9ca3af;
-  border: 1px solid #1f2937;
+  color: black;
+  border: 1px solid black;
 }
 
 button.ghost:hover {
-  border-color: #4b5563;
+  border-color: #de6231;
 }
 
 /* Actions */
@@ -276,23 +277,25 @@ button.ghost:hover {
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(17, 24, 39, 0.9);
-  border: 1px solid #1f2937;
+  background: white;
+  border: 1px solid #cedac6;
 }
 
 .info-box h3,
 .log-box h3 {
   margin: 0 0 6px;
+  color: black;
   font-size: 0.9rem;
 }
 
 .info-box p {
   margin: 4px 0;
   font-size: 0.85rem;
+  color: black;
 }
 
 .param-note {
-  color: #6b7280;
+  color: black;
   font-size: 0.8rem;
 }
 
@@ -302,12 +305,18 @@ button.ghost:hover {
   overflow: auto;
   font-size: 0.8rem;
   white-space: pre-wrap;
-  color: #d1d5db;
+  color: black;
 }
 
 /* Responsive */
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .app-main {
-    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
+  }
+  .visual-panel {
+    width: 90%;
+  }
+  .control-panel {
+    width: 80%;
   }
 }
