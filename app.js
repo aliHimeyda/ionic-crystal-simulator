@@ -298,7 +298,7 @@ function renderIterationLog(results) {
   }
 
   let lines = [];
-  lines.push("i\tR_i (Å)\tR_{i+1} (Å)\t|R_{i+1} - R_i|");
+  lines.push("i\t|R_i\t\t|R_{i+1}\t|ε");
   lines.push("-------------------------------------------");
 
   results.forEach((step) => {
@@ -307,11 +307,11 @@ function renderIterationLog(results) {
     const err = step.error;
     const base =
       step.i +
-      "\t" +
+      "\t|" +
       (Ri != null && isFinite(Ri) ? Ri.toFixed(5) : "NaN") +
-      "\t" +
+      "\t|" +
       (Rnext != null && isFinite(Rnext) ? Rnext.toFixed(5) : "NaN") +
-      "\t" +
+      "\t|" +
       (err != null && isFinite(err) ? err.toExponential(3) : "NaN");
     lines.push(base);
     if (step.note) {
@@ -595,8 +595,13 @@ document.addEventListener("DOMContentLoaded", () => {
         tol
       );
     } else if (method === "bisection") {
-      // Bisection: parametreden önerilen kökün etrafında [a,b] aralığı otomatik verelim
-      const RstarGuess = selected.R0Suggestion || 3.0;
+      let RstarGuess = parseFloat($("initial-R").value);
+      if (!isFinite(RstarGuess) || RstarGuess <= 0) {
+        alert(
+          "bisection için geçerli bir başlangıç uzaklığı R₀ girin (örn. 3.0)."
+        );
+        return;
+      }
       const a = RstarGuess * 0.5;
       const b = RstarGuess * 1.5;
 
