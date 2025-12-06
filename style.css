@@ -56,16 +56,6 @@ body {
   color: black;
 }
 
-.description a {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246);
-}
-
-.description a:hover {
-  -webkit-text-decoration-line: underline;
-  text-decoration-line: underline;
-}
-
 .actions {
   display: flex;
   align-items: center;
@@ -509,5 +499,8 @@ button.ghost:hover {
 
   .param-note {
     font-size: 0.9rem;
+  }
+  .cookie-close {
+    font-size: 46px;
   }
 }

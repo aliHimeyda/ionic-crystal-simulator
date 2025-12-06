@@ -43,12 +43,49 @@ let currentParams = { A: null, B: null, n: null };
 let currentScale = { minR: 1, maxR: 5 };
 let animationTimer = null;
 
+//mesajlar
+
+const messages = {
+  newton: {
+    derivativeTooSmall:
+      "Bu iterasyonda türev <i>f&#8242;(R)</i> değeri sıfıra çok yaklaştı. Böyle bir noktada Newton adımı &Delta;R = - f(R) / f&#8242;(R) çok büyük değerlere sıçrayabileceği için yöntem kararsız hale gelir ve köke doğru ilerleyemez. Bu durum genellikle başlangıç değerinin kökün bulunduğu bölgenin çok dışında (özellikle kökün sağında, büyük bir <i>R</i><sub>0</sub> seçildiğinde) ortaya çıkar. Lütfen daha küçük bir başlangıç değeri deneyiniz. Önerilen: <i>R</i><sub>0</sub> = 1.",
+    invalidNextR:
+      "Hesaplanan yeni uzaklık <i>R</i><sub>i+1</sub> fiziksel aralığın dışına çıktı (negatif, sıfır veya tanımsız bir değer). İyonlar arası mesafe <i>R</i> &gt; 0 olmalıdır; bu aralığın dışındaki sonuçlar yöntemin bu başlangıç noktasıyla diverge olduğunu gösterir. Genellikle başlangıç değeri kökün bulunduğu bölgeden çok uzakta seçildiğinde ortaya çıkar. Lütfen daha küçük bir başlangıç değeri deneyiniz (öneri: <i>R</i><sub>0</sub> = 1).",
+    noConvergenceMaxIter:
+      "Maksimum iterasyon sayısına rağmen |<i>R</i><sub>i+1</sub> − <i>R</i><sub>i</sub>| hatası hedef toleransın altına düşmedi. Maksimum iterasyon sayisi degerini daha buyuk bir sayiya degistiriniz.",
+  },
+  bisection: {
+    sameSign:
+      "Bisection geçersiz aralık hatası: <i>f</i>(a) ve <i>f</i>(b) aynı işaretli bulundu. Bisection için <i>f</i>(a)&middot;<i>f</i>(b) &lt; 0 olmalıdır. Aralık uçları, verdiğiniz başlangıç değerine göre a = R<sub>0</sub> &times; 1 ve b = R<sub>0</sub> &times; 3 formülüyle otomatik hesaplanır. Lütfen kökün işaret değiştirdiği daha uygun bir başlangıç değeri giriniz.",
+    noConvergenceMaxIter:
+      "Belirlenen iterasyon sayısı sonunda [a, b] aralığı istenen hassasiyete kadar daraltılamadı. Daha fazla iterasyona izin vermek veya toleransı biraz gevşetmek gerekebilir.",
+  },
+  secant: {
+    denomTooSmall:
+      "Fonksiyon değerleri <i>f</i>(x₁) ve <i>f</i>(x₀) birbirine çok yakın olduğu için <i>f</i>(x₁) − <i>f</i>(x₀) ≈ 0 oldu. Bu durumda kirişin eğimi neredeyse sıfırdır ve yeni nokta hesabı kararsız hale gelir. Lütfen daha küçük ve köke daha yakın başlangıç noktaları deneyiniz veya alternatif bir yöntem kullanınız.",
+    invalidNextR:
+      "Hesaplanan yeni uzaklık <i>R</i><sub>i+1</sub> fiziksel aralığın dışına çıktı (negatif, sıfır veya tanımsız). Bu durum yöntemin diverge olduğuna işaret eder. Lütfen daha küçük ve köke daha yakın başlangıç değerleri seçerek iterasyonu yeniden başlatınız.",
+    noConvergenceMaxIter:
+      "Secant yakınsama uyarısı: Maksimum iterasyon sayısı içinde hata hedef toleransa düşmedi. Lütfen maksimum iterasyon sayısını artırarak yeniden deneyiniz.",
+  },
+};
+
 // ----------------------------
 // Yardımcı fonksiyonlar
 // ----------------------------
 
 function $(id) {
   return document.getElementById(id);
+}
+
+function showPopup(htmlMessage) {
+  const overlay = document.getElementById("cookie-popup");
+  if (!overlay) return;
+  const desc = overlay.querySelector(".description");
+  if (desc) {
+    desc.innerHTML = htmlMessage;
+  }
+  overlay.classList.add("active");
 }
 
 function initSelects() {
@@ -109,7 +146,7 @@ function fRprime(R, A, B, n) {
   return (-2 * A) / Math.pow(R, 3) + (n * (n + 1) * B) / Math.pow(R, n + 2);
 }
 
-// Newton iterasyonunu hesapla
+/* --- Newton --- */
 function computeNewtonIterations(A, B, n, R0, maxIter, tol) {
   const results = [];
   let R = R0;
@@ -119,15 +156,16 @@ function computeNewtonIterations(A, B, n, R0, maxIter, tol) {
     const fp = fRprime(R, A, B, n);
 
     if (!isFinite(fp) || Math.abs(fp) < 1e-14) {
+      const note = messages.newton.derivativeTooSmall;
       results.push({
         i,
         R,
         Rnext: R,
         error: NaN,
-        note: "Türev çok küçük / sıfıra yakın, iterasyon durduruldu.",
+        note,
       });
-      document.getElementById("cookie-popup").classList.add("active");
-      break;
+      showPopup(note);
+      return results;
     }
 
     const Rnext = R - f / fp;
@@ -141,19 +179,19 @@ function computeNewtonIterations(A, B, n, R0, maxIter, tol) {
     });
 
     if (!isFinite(Rnext) || Rnext <= 0) {
+      const note = messages.newton.invalidNextR;
       results.push({
         i: i + 1,
         R: Rnext,
         Rnext: Rnext,
         error: NaN,
-        note: "R negatif veya sonsuz oldu, iterasyon durduruldu.",
+        note,
       });
-      document.getElementById("cookie-popup").classList.add("active");
-      break;
+      showPopup(note);
+      return results;
     }
 
     if (error < tol) {
-      // Son iterasyonu da ekle
       results.push({
         i: i + 1,
         R: Rnext,
@@ -161,30 +199,41 @@ function computeNewtonIterations(A, B, n, R0, maxIter, tol) {
         error: 0,
         note: "Hata eşiğinin altına inildi, yakınsama sağlandı.",
       });
-      break;
+      return results;
     }
 
     R = Rnext;
   }
 
+  // Buraya geldiysek: max iterasyona rağmen yakınsama yok
+  const note = messages.newton.noConvergenceMaxIter;
+  results.push({
+    i: maxIter,
+    R,
+    Rnext: R,
+    error: NaN,
+    note,
+  });
+  showPopup(note);
   return results;
 }
 
-// Bisection (yarılama) yöntemi
+/* --- Bisection (yarılama) --- */
 function computeBisectionIterations(A, B, n, a, b, maxIter, tol) {
   const results = [];
   let fa = fR(a, A, B, n);
   let fb = fR(b, A, B, n);
 
   if (fa * fb > 0) {
+    const note = messages.bisection.sameSign;
     results.push({
       i: 0,
       R: NaN,
       Rnext: NaN,
       error: NaN,
-      note: "Bisection için f(a) ve f(b) zıt işaretli olmalı (fa * fb < 0).",
+      note,
     });
-    document.getElementById("cookie-popup").classList.add("active");
+    showPopup(note);
     return results;
   }
 
@@ -225,14 +274,24 @@ function computeBisectionIterations(A, B, n, a, b, maxIter, tol) {
         error: 0,
         note: "Hata eşiğinin altına inildi, yakınsama sağlandı (bisection).",
       });
-      break;
+      return results;
     }
   }
 
+  // Yakınsamadan max iterasyona ulaşıldı
+  const note = messages.bisection.noConvergenceMaxIter;
+  results.push({
+    i: maxIter,
+    R: mid,
+    Rnext: mid,
+    error: NaN,
+    note,
+  });
+  showPopup(note);
   return results;
 }
 
-// Kirişler yöntemi (Secant)
+/* --- Kirişler yöntemi (Secant) --- */
 function computeSecantIterations(A, B, n, R0, R1, maxIter, tol) {
   const results = [];
   let x0 = R0;
@@ -244,15 +303,16 @@ function computeSecantIterations(A, B, n, R0, R1, maxIter, tol) {
 
     const denom = f1 - f0;
     if (!isFinite(denom) || Math.abs(denom) < 1e-14) {
+      const note = messages.secant.denomTooSmall;
       results.push({
         i,
         R: x1,
         Rnext: x1,
         error: NaN,
-        note: "Secant yönteminde payda çok küçük, iterasyon durduruldu.",
+        note,
       });
-      document.getElementById("cookie-popup").classList.add("active");
-      break;
+      showPopup(note);
+      return results;
     }
 
     const x2 = x1 - (f1 * (x1 - x0)) / denom;
@@ -266,15 +326,16 @@ function computeSecantIterations(A, B, n, R0, R1, maxIter, tol) {
     });
 
     if (!isFinite(x2) || x2 <= 0) {
+      const note = messages.secant.invalidNextR;
       results.push({
         i: i + 1,
         R: x2,
         Rnext: x2,
         error: NaN,
-        note: "R negatif veya sonsuz oldu, iterasyon durduruldu (secant).",
+        note,
       });
-      document.getElementById("cookie-popup").classList.add("active");
-      break;
+      showPopup(note);
+      return results;
     }
 
     if (error < tol) {
@@ -285,13 +346,23 @@ function computeSecantIterations(A, B, n, R0, R1, maxIter, tol) {
         error: 0,
         note: "Hata eşiğinin altına inildi, yakınsama sağlandı (secant).",
       });
-      break;
+      return results;
     }
 
     x0 = x1;
     x1 = x2;
   }
 
+  // Secant: max iterasyona rağmen yakınsama yok
+  const note = messages.secant.noConvergenceMaxIter;
+  results.push({
+    i: maxIter,
+    R: x1,
+    Rnext: x1,
+    error: NaN,
+    note,
+  });
+  showPopup(note);
   return results;
 }
 
