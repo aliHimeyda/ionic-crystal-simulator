@@ -126,6 +126,7 @@ function computeNewtonIterations(A, B, n, R0, maxIter, tol) {
         error: NaN,
         note: "Türev çok küçük / sıfıra yakın, iterasyon durduruldu.",
       });
+      document.getElementById("cookie-popup").classList.add("active");
       break;
     }
 
@@ -147,6 +148,7 @@ function computeNewtonIterations(A, B, n, R0, maxIter, tol) {
         error: NaN,
         note: "R negatif veya sonsuz oldu, iterasyon durduruldu.",
       });
+      document.getElementById("cookie-popup").classList.add("active");
       break;
     }
 
@@ -182,6 +184,7 @@ function computeBisectionIterations(A, B, n, a, b, maxIter, tol) {
       error: NaN,
       note: "Bisection için f(a) ve f(b) zıt işaretli olmalı (fa * fb < 0).",
     });
+    document.getElementById("cookie-popup").classList.add("active");
     return results;
   }
 
@@ -248,6 +251,7 @@ function computeSecantIterations(A, B, n, R0, R1, maxIter, tol) {
         error: NaN,
         note: "Secant yönteminde payda çok küçük, iterasyon durduruldu.",
       });
+      document.getElementById("cookie-popup").classList.add("active");
       break;
     }
 
@@ -269,6 +273,7 @@ function computeSecantIterations(A, B, n, R0, R1, maxIter, tol) {
         error: NaN,
         note: "R negatif veya sonsuz oldu, iterasyon durduruldu (secant).",
       });
+      document.getElementById("cookie-popup").classList.add("active");
       break;
     }
 
@@ -315,7 +320,7 @@ function renderIterationLog(results) {
       (err != null && isFinite(err) ? err.toExponential(3) : "NaN");
     lines.push(base);
     if (step.note) {
-      lines.push("  ↳ " + step.note);
+      lines.push("\n" + step.note);
     }
   });
 
@@ -545,6 +550,12 @@ document.addEventListener("DOMContentLoaded", () => {
   renderLatticeBackground();
   updateMainIonLabels();
   resetView();
+  document.querySelector(".cookie-close").addEventListener("click", () => {
+    document.getElementById("cookie-popup").classList.remove("active");
+  });
+  document.querySelector(".accept").addEventListener("click", () => {
+    document.getElementById("cookie-popup").classList.remove("active");
+  });
 
   $("positive-ion").addEventListener("change", () => {
     getParamsForSelection();
