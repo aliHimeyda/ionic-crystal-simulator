@@ -15,27 +15,53 @@ const negativeIons = [
   { id: "O2-", label: "O²⁻ (Oksit)", charge: -2 },
 ];
 
-// Parametre setleri (tam fiziksel değerler değil, örnek/ödev amaçlı)
+//-------------------
+//-> A = repulsif kuvvetin şiddeti
+//-> n = repulsif terimin uzaklığa bağlı azalma hızı
+//-> B = Coulomb (çekim) teriminin katsayısı (Madelung sabiti + yüklerin çarpımı içerir)
+//-------------------
 const paramSets = {
-  // NaCl için iki farklı örgü senaryosu
+  // === 1) Na+ ile tüm negatif iyonlar ===
   "Na+_Cl-": {
     BCC: { A: 12.0, B: 9500.0, n: 9, R0Suggestion: 3.0 },
     FCC: { A: 14.0, B: 11000.0, n: 9, R0Suggestion: 2.8 },
   },
+  "Na+_F-": {
+    BCC: { A: 11.5, B: 9000.0, n: 8, R0Suggestion: 2.6 },
+    FCC: { A: 13.0, B: 10000.0, n: 8, R0Suggestion: 2.4 },
+  },
+  "Na+_O2-": {
+    BCC: { A: 17.0, B: 18000.0, n: 10, R0Suggestion: 2.2 },
+    FCC: { A: 19.0, B: 21000.0, n: 10, R0Suggestion: 2.1 },
+  },
+
+  // === 2) K+ ile tüm negatif iyonlar ===
   "K+_Cl-": {
     BCC: { A: 11.0, B: 9000.0, n: 9, R0Suggestion: 3.2 },
     FCC: { A: 13.0, B: 10500.0, n: 9, R0Suggestion: 3.0 },
+  },
+  "K+_F-": {
+    BCC: { A: 10.5, B: 8500.0, n: 8, R0Suggestion: 2.9 },
+    FCC: { A: 12.5, B: 9500.0, n: 8, R0Suggestion: 2.7 },
+  },
+  "K+_O2-": {
+    BCC: { A: 16.0, B: 17000.0, n: 10, R0Suggestion: 2.4 },
+    FCC: { A: 18.0, B: 20000.0, n: 10, R0Suggestion: 2.3 },
+  },
+
+  // === 3) Ca2+ ile tüm negatif iyonlar ===
+  "Ca2+_Cl-": {
+    BCC: { A: 18.0, B: 15000.0, n: 10, R0Suggestion: 2.7 },
+    FCC: { A: 20.0, B: 17000.0, n: 10, R0Suggestion: 2.6 },
+  },
+  "Ca2+_F-": {
+    BCC: { A: 19.0, B: 16500.0, n: 9, R0Suggestion: 2.5 },
+    FCC: { A: 21.0, B: 18500.0, n: 9, R0Suggestion: 2.4 },
   },
   "Ca2+_O2-": {
     BCC: { A: 20.0, B: 20000.0, n: 10, R0Suggestion: 2.4 },
     FCC: { A: 22.0, B: 23000.0, n: 10, R0Suggestion: 2.3 },
   },
-};
-
-// Parametre bulunamazsa kullanılacak genel set
-const defaultParams = {
-  BCC: { A: 10.0, B: 9000.0, n: 9, R0Suggestion: 3.0 },
-  FCC: { A: 11.0, B: 9500.0, n: 9, R0Suggestion: 3.0 },
 };
 
 // Global state benzeri
@@ -120,8 +146,6 @@ function getParamsForSelection() {
   let selected;
   if (paramSets[key] && paramSets[key][lattice]) {
     selected = paramSets[key][lattice];
-  } else {
-    selected = defaultParams[lattice];
   }
 
   currentParams = {
@@ -231,7 +255,8 @@ function computeBisectionIterations(A, B, n, a, b, maxIter, tol) {
       R: NaN,
       Rnext: NaN,
       error: NaN,
-      note,
+      interval: `[${a.toFixed(6)}, ${b.toFixed(6)}]`,
+      note: "Zit isaretli olmadigindan iraksaktir",
     });
     showPopup(note);
     return results;
@@ -242,16 +267,13 @@ function computeBisectionIterations(A, B, n, a, b, maxIter, tol) {
   for (let i = 0; i < maxIter; i++) {
     const fmid = fR(mid, A, B, n);
 
-    // Bir adım önceki mid
     const oldMid = mid;
 
-    // Hangi tarafa gideceğiz?
+    // Hangi tarafa gidiyoruz?
     if (fa * fmid < 0) {
-      // kök [a, mid] aralığında
       b = mid;
       fb = fmid;
     } else {
-      // kök [mid, b] aralığında
       a = mid;
       fa = fmid;
     }
@@ -264,6 +286,7 @@ function computeBisectionIterations(A, B, n, a, b, maxIter, tol) {
       R: oldMid,
       Rnext: mid,
       error,
+      interval: `[${a.toFixed(6)}, ${b.toFixed(6)}]`, // 🔥 Yeni sütun
     });
 
     if (error < tol) {
@@ -272,19 +295,20 @@ function computeBisectionIterations(A, B, n, a, b, maxIter, tol) {
         R: mid,
         Rnext: mid,
         error: 0,
+        interval: `[${a.toFixed(6)}, ${b.toFixed(6)}]`,
         note: "Hata eşiğinin altına inildi, yakınsama sağlandı (bisection).",
       });
       return results;
     }
   }
 
-  // Yakınsamadan max iterasyona ulaşıldı
   const note = messages.bisection.noConvergenceMaxIter;
   results.push({
     i: maxIter,
     R: mid,
     Rnext: mid,
     error: NaN,
+    interval: `[${a.toFixed(6)}, ${b.toFixed(6)}]`,
     note,
   });
   showPopup(note);
@@ -390,6 +414,41 @@ function renderIterationLog(results) {
       "\t|" +
       (err != null && isFinite(err) ? err.toExponential(3) : "NaN");
     lines.push(base);
+    if (step.note) {
+      lines.push("\n" + step.note);
+    }
+  });
+
+  $("iteration-log").textContent = lines.join("\n");
+}
+
+function renderBesectionIterationLog(results) {
+  if (!results.length) {
+    $("iteration-log").textContent = "(sonuç yok)";
+    return;
+  }
+
+  let lines = [];
+  lines.push("i\t|R_i\t\t|R_{i+1}\t|ε");
+  lines.push("-------------------------------------------");
+
+  results.forEach((step) => {
+    const Ri = step.R;
+    const Rnext = step.Rnext;
+    const err = step.error;
+    const inter = step.interval;
+    const base =
+      step.i +
+      "\t|" +
+      (Ri != null && isFinite(Ri) ? Ri.toFixed(5) : "NaN") +
+      "\t|" +
+      (Rnext != null && isFinite(Rnext) ? Rnext.toFixed(5) : "NaN") +
+      "\t|" +
+      (err != null && isFinite(err) ? err.toExponential(3) : "NaN");
+    lines.push(base);
+    lines.push("-------------------------------------------");
+    lines.push(`Guncel Aralik : ${step.interval}`);
+    lines.push("-------------------------------------------");
     if (step.note) {
       lines.push("\n" + step.note);
     }
@@ -676,6 +735,7 @@ document.addEventListener("DOMContentLoaded", () => {
         maxIter,
         tol
       );
+      renderIterationLog(results);
     } else if (method === "bisection") {
       let RstarGuess = parseFloat($("initial-R").value);
       if (!isFinite(RstarGuess) || RstarGuess <= 0) {
@@ -686,7 +746,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const a = RstarGuess * 0.5;
       const b = RstarGuess * 1.5;
-
       results = computeBisectionIterations(
         selected.A,
         selected.B,
@@ -696,6 +755,7 @@ document.addEventListener("DOMContentLoaded", () => {
         maxIter,
         tol
       );
+      renderBesectionIterationLog(results);
     } else if (method === "secant") {
       // Secant: R0 input, R1 otomatik biraz farklı
       let R0 = parseFloat($("initial-R").value);
@@ -713,9 +773,9 @@ document.addEventListener("DOMContentLoaded", () => {
         maxIter,
         tol
       );
+      renderIterationLog(results);
     }
 
-    renderIterationLog(results);
     animateIterations(results);
   });
 
