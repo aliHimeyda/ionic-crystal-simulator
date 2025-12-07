@@ -33,6 +33,117 @@
           ve sayısal yöntemle denge mesafesine yakınsamayı gör.
         </p>
       </header>
+      <div id="formula-container">
+        <div class="formula-card">
+          <div class="formula-card__title">
+            İyonik Potansiyel Enerji Modeli ve Parametreler
+          </div>
+
+          <!-- U(R) = -B/R + A/R^n -->
+          <div class="formula-block">
+            <div class="eq">
+              <div class="eq-body">
+                <span class="fn">U</span>(<span class="fn">R</span>) = −
+                <span class="frac">
+                  <span class="num"><span class="fn">B</span></span>
+                  <span class="den"><span class="fn">R</span></span>
+                </span>
+                +
+                <span class="frac">
+                  <span class="num"><span class="fn">A</span></span>
+                  <span class="den"><span class="fn">R</span><sup>n</sup></span>
+                </span>
+              </div>
+              <div class="eq-number">(1)</div>
+            </div>
+            <div class="eq-caption">
+              İyonik kristaller için kullanılan toplam potansiyel enerji modeli.
+              Burada <span class="fn">R</span> iyonlar arası uzaklık (değişken),
+              <span class="fn">A</span>, <span class="fn">B</span> ve
+              <span class="fn">n</span> ise sistem sabitleridir.
+            </div>
+          </div>
+
+          <!-- B = (M |z+ z-| e^2) / (4π ε0) -->
+          <div class="formula-block">
+            <div class="eq">
+              <div class="eq-body">
+                <span class="fn">B</span> =
+                <span class="frac">
+                  <span class="num">
+                    <span class="fn">M</span> · |z<sub>+</sub> z<sub>−</sub>| ·
+                    e<sup>2</sup>
+                  </span>
+                  <span class="den"> 4π ε<sub>0</sub> </span>
+                </span>
+              </div>
+              <div class="eq-number">(2)</div>
+            </div>
+            <div class="eq-caption">
+              Çekim teriminin katsayısı.
+              <span class="fn">M</span>: Madelung sabiti, z<sub>+</sub>,
+              z<sub>−</sub>: iyon yükleri, e: elektron yükü, ε<sub>0</sub>:
+              vakum dielektrik sabiti.
+              <br />
+              <span class="accent">Not:</span>
+              <span class="fn">B</span> yalnızca iyon türüne ve örgü tipine
+              bağlıdır, <span class="fn">R</span>'ye bağlı değildir.
+            </div>
+          </div>
+
+          <!-- n açıklaması -->
+          <div class="formula-block">
+            <div class="eq">
+              <div class="eq-body"><span class="fn">n</span> : Born üssü</div>
+              <div class="eq-number">(3)</div>
+            </div>
+            <div class="eq-caption">
+              Tipik değerler: NaCl için <span class="fn">n</span> ≈ 9, CaO için
+              <span class="fn">n</span> ≈ 10 gibi. Deneysel / kuantum mekanik
+              hesaplamalardan gelir ve iyon çiftine bağlı bir sabittir;
+              <span class="fn">R</span>'ye bağlı değildir.
+            </div>
+          </div>
+
+          <!-- A = (B R0^(n-1)) / n -->
+          <div class="formula-block">
+            <div class="eq">
+              <div class="eq-body">
+                <span class="fn">A</span> =
+                <span class="frac">
+                  <span class="num">
+                    <span class="fn">B</span> · R<sub>0</sub><sup>n − 1</sup>
+                  </span>
+                  <span class="den">n</span>
+                </span>
+              </div>
+              <div class="eq-number">(4)</div>
+            </div>
+            <div class="eq-caption">
+              Repulsiyon katsayısı. R<sub>0</sub>, deneysel denge uzaklığıdır
+              (literatürde verilen iyon–iyon mesafesi). Bu projede kullanılan
+              <span class="fn">A</span> değerleri, ödev ve görselleştirme amaçlı
+              örnek parametrelerdir.
+            </div>
+          </div>
+
+          <!-- R0Suggestion açıklaması -->
+          <div class="formula-block">
+            <div class="eq">
+              <div class="eq-body">
+                R<sub>0,suggestion</sub> : Başlangıç deneme uzaklığı
+              </div>
+              <div class="eq-number">(5)</div>
+            </div>
+            <div class="eq-caption">
+              Newton veya Secant yönteminin daha hızlı ve kararlı yakınsaması
+              için önerilen başlangıç mesafesidir. Gerçek fiziksel
+              R<sub>0</sub>'a yakın, fakat iteratif çözüme giriş noktası olarak
+              kullanılır.
+            </div>
+          </div>
+        </div>
+      </div>
 
       <main class="app-main">
         <!-- Sol taraf: Görsel kutu -->
