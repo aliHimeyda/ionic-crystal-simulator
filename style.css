@@ -567,7 +567,7 @@ math {
     gap: 50px;
   }
   .visual-panel {
-    top: 170px;
+    top: 120px;
     width: 96%;
   }
   .control-panel {
@@ -634,16 +634,15 @@ math {
   .formula-block {
     padding: 30px;
   }
-  .eq {
-    grid-template-columns: 0.95fr auto; /* sol: eşitlik, sağ: numara */
+  .eq-caption {
+    font-size: 16px;
   }
-
   .eq-body,
   math {
-    font-size: 18px;
+    font-size: 22px;
   }
   .frac .num,
   .frac .den {
-    font-size: 36px;
+    font-size: 26px;
   }
 }
