@@ -20,6 +20,71 @@ const negativeIons = [
 //-> n = repulsif terimin uzaklığa bağlı azalma hızı
 //-> B = Coulomb (çekim) teriminin katsayısı (Madelung sabiti + yüklerin çarpımı içerir)
 //-------------------
+/* 
+===========================================================
+ A, B ve n Katsayılarının Fiziksel Anlamı
+===========================================================
+
+Bu tabloda kullanılan A, B ve n değerleri "ödev amaçlı örnek parametrelerdir".
+Gerçek kristal enerjisi hesaplarında değerler Born–Landé potansiyelinden türetilir.
+
+Potansiyel enerji fonksiyonu:
+    U(R) = -B / R + A / R^n
+
+Burada:
+
+-----------------------------------------------------------
+ 1) B (çekim katsayısı)
+-----------------------------------------------------------
+B şu formülle tanımlanır:
+
+    B = (M · |z₊ z₋| · e²) / (4π ε₀)
+
+- M : Madelung sabiti  (ör. NaCl → 1.7476, CsCl → 1.7627)
+- z₊, z₋ : iyon yükleri (ör. Na⁺ ⇒ +1, Cl⁻ ⇒ –1)
+- e : elektron yükü
+- ε₀ : vakum dielektrik sabiti
+
+B → yalnızca iyon yüklerine ve kristal örgüsüne bağlıdır, R’ye bağlı değildir.
+
+-----------------------------------------------------------
+ 2) n (Born eksponenti)
+-----------------------------------------------------------
+Repulsiyonun uzaklığın üssü olarak azalma hızını belirler.
+Deneysel veya kuantum kimyası hesaplamalarıyla elde edilir.
+
+Örnek tipik değerler:
+- NaCl → n ≈ 9
+- KCl  → n ≈ 9
+- CaO → n ≈ 10
+
+R’ye bağlı değildir; iyonik çiftin türüne bağlı sabittir.
+
+-----------------------------------------------------------
+ 3) A (repulsiyon katsayısı)
+-----------------------------------------------------------
+Born–Landé repulsiyon katsayısı yaklaşık:
+
+    A = (B · R₀^(n-1)) / n
+
+Burada R₀ → deneysel denge iyonik mesafesi (literatürden alınır).
+Bu R₀, iterasyonla çözdüğümüz R değildir; deneysel referanstır.
+
+Bu projede A değerleri örnek olarak verilmiştir.
+
+-----------------------------------------------------------
+ 4) R0Suggestion
+-----------------------------------------------------------
+Her iyon çifti için "başlangıç R değeri önerisi"dir.
+Newton veya bisection veya Secant yöntemlerinde yakınsamayı kolaylaştırmak içindir.
+
+-----------------------------------------------------------
+ 5) Bu tablo → Ödev/Demonstrasyon amaçlıdır
+-----------------------------------------------------------
+Gerçek fiziksel değerleri temsil etmez.
+===========================================================
+*/
+
 const paramSets = {
   // === 1) Na+ ile tüm negatif iyonlar ===
   "Na+_Cl-": {
